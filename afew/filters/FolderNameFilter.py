@@ -27,7 +27,8 @@ class FolderNameFilter(Filter):
     message = 'Tags all new messages with their folder'
 
     def __init__(self, database, folder_blacklist='', folder_transforms='',
-            maildir_separator='.', folder_explicit_list='', folder_lowercases=''):
+                 maildir_separator='.', folder_explicit_list='',
+                 folder_lowercases='', subfolders_of=''):
         super(FolderNameFilter, self).__init__(database)
 
         self.__filename_pattern = '{mail_root}/(?P<maildirs>.*)/(cur|new)/[^/]+'.format(
@@ -37,14 +38,17 @@ class FolderNameFilter(Filter):
         self.__folder_transforms = self.__parse_transforms(folder_transforms)
         self.__folder_lowercases = folder_lowercases != ''
         self.__maildir_separator = maildir_separator
+        self.__subfolders_of = subfolders_of
 
 
     def handle_message(self, message):
         # Find all the dirs in the mail directory that this message
         # belongs to
+        print('message', message)
         maildirs = [re.match(self.__filename_pattern, filename)
                     for filename in message.get_filenames()]
         maildirs = filter(None, maildirs)
+        print('maildirs: ', maildirs)
         if maildirs:
             # Make the folders relative to mail_root and split them.
             folder_groups = [maildir.group('maildirs').split(self.__maildir_separator)
@@ -52,6 +56,7 @@ class FolderNameFilter(Filter):
             folders = set([folder
                            for folder_group in folder_groups
                            for folder in folder_group])
+            print ('folders:', folders)
             self.log.debug('found folders {} for message {!r}'.format(
                 folders, message.get_header('subject')))
 
@@ -62,7 +67,14 @@ class FolderNameFilter(Filter):
                 clean_folders &= self.__folder_explicit_list
             # apply transformations
             transformed_folders = self.__transform_folders(clean_folders)
-
+            if self.__subfolders_of != '':
+                subf = []
+                for folder in transformed_folders:
+                    if folder.startswith(self.__subfolders_of):
+                        subf.append(folder[len(self.__subfolders_of)+1:])
+                transformed_folders = subf
+            print('transformed_folders', transformed_folders)
+            #import ipdb; ipdb.set_trace()
             self.add_tags(message, *transformed_folders)
 
 

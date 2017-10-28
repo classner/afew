@@ -29,7 +29,8 @@ from afew.main import main as inner_main
 from afew.utils import filter_compat
 from afew.FilterRegistry import all_filters
 from afew.Settings import user_config_dir, get_filter_chain, \
-        get_mail_move_rules, get_mail_move_age, get_mail_move_rename
+        get_mail_move_rules, get_mail_move_age, get_mail_move_rename, \
+        get_mail_move_subquery
 from afew.NotmuchSettings import read_notmuch_settings, get_notmuch_new_query
 from afew.version import version
 
@@ -152,6 +153,7 @@ def main():
         args.mail_move_rules = get_mail_move_rules()
         args.mail_move_age = get_mail_move_age()
         args.mail_move_rename = get_mail_move_rename()
+        args.mail_move_subquery = get_mail_move_subquery()
 
     with Database() as database:
         configured_filter_chain = get_filter_chain(database)

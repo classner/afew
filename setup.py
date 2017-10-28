@@ -22,8 +22,8 @@ from setuptools import setup, find_packages
 from sys import version_info
 
 def get_requires():
-    if os.environ.get('TRAVIS') != 'true':
-        yield 'notmuch'
+    #if os.environ.get('TRAVIS') != 'true':
+    #    yield 'notmuch'
     yield 'chardet'
 
 setup(

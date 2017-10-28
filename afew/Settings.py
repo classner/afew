@@ -109,3 +109,9 @@ def get_mail_move_rename():
     if settings.has_option(mail_mover_section, 'rename'):
         rename = settings.get(mail_mover_section, 'rename').lower() == 'true'
     return rename
+
+def get_mail_move_subquery():
+    subquery = ""
+    if settings.has_option(mail_mover_section, 'subquery'):
+        subquery = settings.get(mail_mover_section, 'subquery')
+    return subquery

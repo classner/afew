@@ -34,10 +34,12 @@ class MailMover(Database):
     '''
 
 
-    def __init__(self, max_age=0, rename = False, dry_run=False):
+    def __init__(self, max_age=0, rename = False, dry_run=False, subquery=""):
         super(MailMover, self).__init__()
         self.db = notmuch.Database(self.db_path)
-        self.query = 'folder:{folder} AND {subquery}'
+        self.query = 'path:{folder} AND {subquery}'
+        if subquery != "":
+            self.query += ' AND ' + subquery
         if max_age:
             days = timedelta(int(max_age))
             start = date.today() - days
@@ -73,10 +75,16 @@ class MailMover(Database):
             messages = notmuch.Query(self.db, main_query).search_messages()
             for message in messages:
                 # a single message (identified by Message-ID) can be in several
-                # places; only touch the one(s) that exists in this maildir 
+                # places; only touch the one(s) that exists in this maildir
                 all_message_fnames = message.get_filenames()
+                if maildir.endswith("**"):
+                    searchdir = maildir[:-2]
+                else:
+                    searchdir = maildir
+                if '**' in searchdir:
+                    raise NotImplementedError()
                 to_move_fnames = [name for name in all_message_fnames
-                                  if maildir in name]
+                                  if searchdir in name]
                 if not to_move_fnames:
                     continue
                 moved = True
