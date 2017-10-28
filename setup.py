@@ -48,6 +48,7 @@ setup(
             'ListMailsFilter = afew.filters.ListMailsFilter:ListMailsFilter',
             'SentMailsFilter = afew.filters.SentMailsFilter:SentMailsFilter',
             'SpamFilter = afew.filters.SpamFilter:SpamFilter',
+            'TagByLocFilter = afew.filters.TagByLocFilter:TagByLocFilter',
         ],
     },
     install_requires=list(get_requires()),
