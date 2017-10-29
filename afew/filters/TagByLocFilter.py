@@ -20,7 +20,7 @@ class TagByLocFilter(Filter):
         self.log.info(self.message)
 
         for folder, tag in zip(self._folders, self._tags):
-            query = self.database.get_messages('folder:%s AND NOT tag:%s' % (
+            query = self.database.get_messages('path:%s AND NOT tag:%s' % (
                 folder, tag))
             for message in query:
                 self.add_tags(message, tag)
